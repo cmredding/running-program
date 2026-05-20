@@ -36,4 +36,4 @@ The app saves checkmarks in the browser on each device. Use **Progress > Export 
 
 ## Audio Files
 
-The MP3 coaching tracks are included in the app folder and are referenced by filename. If you publish to GitHub Pages or move the app to MEGA, keep the `.mp3` files in the same folder as `index.html`.
+The MP3 coaching tracks are hosted as GitHub Release assets under `audio-v1`, so the GitHub Pages app can stay lightweight and Android-installable. Keep local MP3 copies as a backup if you want, but the published app streams them from the release.

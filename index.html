@@ -958,6 +958,7 @@ const stretchData = [
 // ─── STATE ───────────────────────────────────────────────
 let completed = loadCompleted();
 let currentModal = null;
+const AUDIO_BASE_URL = 'https://github.com/cmredding/running-program/releases/download/audio-v1/';
 
 function loadCompleted() {
   try {
@@ -1049,6 +1050,10 @@ function resetProgress() {
 
 function workoutId(program, week, dayIdx) {
   return `${program}_w${week}_d${dayIdx}`;
+}
+
+function audioSrc(fileName) {
+  return AUDIO_BASE_URL + encodeURIComponent(fileName);
 }
 
 // ─── RENDER FUNCTIONS ─────────────────────────────────────
@@ -1147,7 +1152,7 @@ function openModal(programKey, weekId, dayIdx) {
         <div class="audio-info">
           <div class="audio-label">Audio Coaching Track</div>
           <div class="audio-filename">${audioFile}</div>
-          <div class="audio-player"><audio controls src="${audioFile}"></audio></div>
+          <div class="audio-player"><audio controls src="${audioSrc(audioFile)}"></audio></div>
         </div>
       </div>
     `;

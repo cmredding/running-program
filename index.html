@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Program — Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F4641E;
+    --navy: #0D1B2A;
+    --navy2: #1A2D42;
+    --gold: #F5A623;
+    --white: #F8F6F1;
+    --muted: #8899A6;
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --card-bg: #162336;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--orange) 0%, #c0420e 100%);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: white;
+    line-height: 1;
+  }
+  .logo span { color: var(--gold); }
+  .today-pill {
+    background: rgba(0,0,0,0.25);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    background: var(--navy2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display:none; }
+  nav button {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 14px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav button.active {
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+  nav button:hover { color: var(--white); }
+
+  /* ── SECTIONS ── */
+  .section { display:none; padding: 20px 16px 80px; }
+  .section.active { display:block; }
+
+  /* ── PROGRAM CARDS (home) ── */
+  .program-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .prog-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 18px 14px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .prog-card::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:3px;
+  }
+  .prog-card.c1::before { background: var(--green); }
+  .prog-card.c2::before { background: var(--orange); }
+  .prog-card.c3::before { background: var(--gold); }
+  .prog-card.c4::before { background: #9B59B6; }
+  .prog-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+  .prog-card:active { transform: translateY(0); }
+  .prog-icon { font-size: 28px; margin-bottom: 10px; }
+  .prog-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .prog-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    color: var(--white);
+  }
+  .prog-weeks {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* ── WEEK ACCORDION ── */
+  .week-block { margin-bottom: 10px; }
+  .week-header {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .week-header:hover { border-color: rgba(255,255,255,0.2); }
+  .week-header.open { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+  .week-header-left { display:flex; align-items:center; gap:12px; }
+  .week-badge {
+    background: var(--orange);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .week-title-text { font-weight: 600; font-size: 14px; }
+  .week-progress { font-size: 12px; color: var(--muted); }
+  .chevron { transition: transform 0.2s; font-size: 12px; color: var(--muted); }
+  .chevron.open { transform: rotate(180deg); }
+
+  .week-body {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 4px 0 8px;
+    display: none;
+  }
+  .week-body.open { display:block; }
+
+  /* ── DAY ROW ── */
+  .day-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .day-row:last-child { border-bottom: none; }
+  .day-row:hover { background: rgba(255,255,255,0.03); }
+  .day-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+  .day-check.done { background: var(--green); border-color: var(--green); color: white; }
+  .day-info { flex:1; }
+  .day-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .day-workout { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+  .day-detail { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .day-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .tag-rest { background: rgba(136,153,166,0.15); color: var(--muted); }
+  .tag-hard { background: rgba(244,100,30,0.15); color: var(--orange); }
+  .tag-long { background: rgba(245,166,35,0.15); color: var(--gold); }
+  .tag-easy { background: rgba(46,204,113,0.15); color: var(--green); }
+  .tag-cross { background: rgba(155,89,182,0.15); color: #BB8FCE; }
+  .tag-audio { background: rgba(52,152,219,0.15); color: #5DADE2; }
+
+  /* ── WORKOUT DETAIL MODAL ── */
+  .modal-overlay {
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    padding: 20px 16px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display:flex; align-items: flex-start; justify-content: center; }
+  .modal {
+    background: var(--navy2);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .modal-header {
+    background: linear-gradient(135deg, var(--orange), #c0420e);
+    padding: 20px;
+  }
+  .modal-tag { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform:uppercase; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 1px; color:white; }
+  .modal-body { padding: 20px; }
+  .modal-desc { font-size: 14px; line-height: 1.7; color: rgba(248,246,241,0.85); margin-bottom: 20px; }
+  .steps-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform:uppercase; color:var(--muted); margin-bottom: 12px; }
+  .step-row {
+    display:flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .step-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+  .step-text { font-size: 13px; line-height: 1.5; color: var(--white); }
+  .step-effort { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .effort-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.1);
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .effort-fill { height:100%; border-radius:2px; background: var(--orange); transition: width 0.5s; }
+  .modal-footer {
+    padding: 0 20px 20px;
+    display:flex;
+    gap:10px;
+  }
+  .btn-done {
+    flex:1;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-done:hover { opacity: 0.9; }
+  .btn-close {
+    background: rgba(255,255,255,0.08);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .btn-secondary,
+  .btn-danger {
+    background: rgba(255,255,255,0.08);
+    color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-secondary:hover,
+  .btn-danger:hover { border-color: rgba(255,255,255,0.22); }
+  .btn-danger { color: #ffb8ad; border-color: rgba(231,76,60,0.28); }
+
+  /* ── STRETCHING ── */
+  .stretch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stretch-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .stretch-num { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--orange); line-height:1; margin-bottom:4px; }
+  .stretch-name { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom:6px; }
+  .stretch-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* ── HOME TIPS ── */
+  .tip-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 10px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .tip-icon { font-size: 22px; flex-shrink:0; margin-top:2px; }
+  .tip-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom:4px; }
+  .tip-text { font-size: 12px; color: var(--muted); line-height:1.5; }
+  .install-card {
+    background: rgba(245,166,35,0.1);
+    border: 1px solid rgba(245,166,35,0.28);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+    display: none;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .install-card.show { display: flex; }
+  .install-copy { flex: 1; }
+  .install-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .install-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .install-btn {
+    background: var(--gold);
+    color: #1b1200;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-header {
+    background: var(--card-bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 14px;
+    text-align:center;
+  }
+  .progress-big { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--orange); line-height:1; }
+  .progress-label { font-size: 12px; color: var(--muted); margin-top:2px; }
+  .progress-bar-wrap { background: rgba(255,255,255,0.08); border-radius:4px; height:6px; margin-top:14px; overflow:hidden; }
+  .progress-bar-fill { height:100%; border-radius:4px; background: linear-gradient(90deg, var(--orange), var(--gold)); transition: width 0.6s; }
+
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align:center;
+  }
+  .stat-num { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--white); }
+  .stat-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .backup-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .backup-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .backup-note { font-size: 12px; line-height: 1.5; color: var(--muted); margin-bottom: 12px; }
+  .backup-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .backup-status { font-size: 12px; color: var(--green); min-height: 18px; margin-top: 10px; }
+
+  /* ── HALF MARATHON SPECIFIC ── */
+  .hm-workout-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #9B59B6;
+    margin-bottom: 3px;
+  }
+
+  /* ── AUDIO PLAYER ── */
+  .audio-block {
+    background: rgba(52,152,219,0.1);
+    border: 1px solid rgba(52,152,219,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .audio-icon { font-size: 20px; flex-shrink:0; }
+  .audio-info { flex:1; }
+  .audio-label { font-size: 11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#5DADE2; margin-bottom:2px; }
+  .audio-filename { font-size: 12px; color: var(--muted); }
+  .audio-player { width:100%; margin-top:8px; height:32px; }
+  audio { width:100%; border-radius:6px; }
+  .day-audio-badge {
+    font-size: 10px;
+    background: rgba(52,152,219,0.15);
+    color: #5DADE2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  /* ── FLOATING SCROLL TOP ── */
+  @media (max-width: 480px) {
+    .program-grid { grid-template-columns: 1fr 1fr; }
+    .stretch-grid { grid-template-columns: 1fr; }
+    .backup-actions { grid-template-columns: 1fr; }
+    .install-card { flex-direction: column; }
+    .install-btn { width: 100%; }
+  }
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F4641E">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  });
+}
+
+let installPromptEvent = null;
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPromptEvent = event;
+  document.getElementById('installCard')?.classList.add('show');
+});
+</script>
+
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Running Program</div>
+    <div class="today-pill" id="todayPill">Loading...</div>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showSection('home')">🏠 Home</button>
+  <button onclick="showSection('couch5k')">🛋 Couch→5K</button>
+  <button onclick="showSection('fastest5k')">⚡ Fastest 5K</button>
+  <button onclick="showSection('tenk')">🏅 10K 101</button>
+  <button onclick="showSection('halfmarathon')">🏆 Half Marathon</button>
+  <button onclick="showSection('stretching')">🧘 Stretching</button>
+  <button onclick="showSection('progress')">📊 Progress</button>
+</nav>
+
+<!-- ═══ HOME ═══ -->
+<div id="home" class="section active">
+  <div class="section-title">Training Hub</div>
+  <div class="section-sub">Running Program — Choose your program</div>
+
+  <div class="install-card" id="installCard">
+    <div class="install-copy">
+      <div class="install-title">Install on Android</div>
+      <div class="install-text">Add this to your phone for a full-screen app icon, saved progress, and quick access to your coaching tracks.</div>
+    </div>
+    <button class="install-btn" onclick="installApp()">Install App</button>
+  </div>
+
+  <div class="program-grid">
+    <div class="prog-card c1" onclick="showSection('couch5k')">
+      <div class="prog-icon">🛋️</div>
+      <div class="prog-label">Beginner</div>
+      <div class="prog-title">Couch to 5K</div>
+      <div class="prog-weeks">8 weeks · Walk/jog intervals</div>
+    </div>
+    <div class="prog-card c2" onclick="showSection('fastest5k')">
+      <div class="prog-icon">⚡</div>
+      <div class="prog-label">Speed</div>
+      <div class="prog-title">Fastest 5K</div>
+      <div class="prog-weeks">4 weeks · Set a new PR</div>
+    </div>
+    <div class="prog-card c3" onclick="showSection('tenk')">
+      <div class="prog-icon">🏅</div>
+      <div class="prog-label">Intermediate</div>
+      <div class="prog-title">10K 101</div>
+      <div class="prog-weeks">6 weeks · Audio-guided</div>
+    </div>
+    <div class="prog-card c4" onclick="showSection('halfmarathon')">
+      <div class="prog-icon">🏆</div>
+      <div class="prog-label">Advanced</div>
+      <div class="prog-title">Half Marathon</div>
+      <div class="prog-weeks">9 weeks · 13.1 miles</div>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-icon">💡</div>
+    <div>
+      <div class="tip-title">Effort Levels Explained</div>
+      <div class="tip-text">50% = comfortable jog, can talk easily · 70% = working hard, short sentences · 85% = very hard, near breathless · 95–100% = all-out sprint</div>
+    </div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🎧</div>
+    <div>
+      <div class="tip-title">Audio Coaching</div>
+      <div class="tip-text">Several workouts have MP3 coaching tracks. Play the corresponding audio while you run — Todd will guide you through every interval in real time.</div>
+    </div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🧘</div>
+    <div>
+      <div class="tip-title">Always Stretch</div>
+      <div class="tip-text">Static stretching before and after every run. Hold each stretch 20 seconds. Never bounce or push through pain. See the Stretching tab for all 11 stretches.</div>
+    </div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">💧</div>
+    <div>
+      <div class="tip-title">Hydrate Daily</div>
+      <div class="tip-text">Hydration is especially important on rest days. Drink water consistently throughout the day, not just around workouts.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COUCH TO 5K ═══ -->
+<div id="couch5k" class="section">
+  <div class="section-title">Couch to 5K</div>
+  <div class="section-sub">8-week beginner program · Build to a continuous 30-min run</div>
+  <div id="couch5k-weeks"></div>
+</div>
+
+<!-- ═══ FASTEST 5K ═══ -->
+<div id="fastest5k" class="section">
+  <div class="section-title">Fastest 5K</div>
+  <div class="section-sub">4-week speed program · Set a new personal record</div>
+  <div id="fastest5k-weeks"></div>
+</div>
+
+<!-- ═══ 10K 101 ═══ -->
+<div id="tenk" class="section">
+  <div class="section-title">10K 101</div>
+  <div class="section-sub">6-week program · Audio track guided workouts</div>
+  <div id="tenk-weeks"></div>
+</div>
+
+<!-- ═══ HALF MARATHON ═══ -->
+<div id="halfmarathon" class="section">
+  <div class="section-title">Half Marathon</div>
+  <div class="section-sub">9-week HM Extension · Building to 13.1 miles</div>
+  <div id="hm-weeks"></div>
+</div>
+
+<!-- ═══ STRETCHING ═══ -->
+<div id="stretching" class="section">
+  <div class="section-title">11 Essential Stretches</div>
+  <div class="section-sub">Do before and after every run · Hold each 20 seconds</div>
+  <div class="stretch-grid" id="stretch-grid"></div>
+</div>
+
+<!-- ═══ PROGRESS ═══ -->
+<div id="progress" class="section">
+  <div class="section-title">Your Progress</div>
+  <div class="section-sub">Tap any workout to mark it complete</div>
+  <div class="progress-header">
+    <div class="progress-big" id="prog-pct">0%</div>
+    <div class="progress-label">Overall completion across all programs</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-bar" style="width:0%"></div></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-done">0</div>
+      <div class="stat-label">Workouts done</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-left">0</div>
+      <div class="stat-label">Remaining</div>
+    </div>
+  </div>
+  <div class="backup-card">
+    <div class="backup-title">Backup Progress</div>
+    <div class="backup-note">Export a small backup file, then keep it in MEGA, GitHub, iCloud, Dropbox, or anywhere else. Import it on another device to restore your checkmarks.</div>
+    <div class="backup-actions">
+      <button class="btn-secondary" onclick="exportProgress()">Export Backup</button>
+      <button class="btn-secondary" onclick="document.getElementById('progressImport').click()">Import Backup</button>
+      <button class="btn-danger" onclick="resetProgress()">Reset Progress</button>
+    </div>
+    <input id="progressImport" type="file" accept="application/json,.json" style="display:none" onchange="importProgress(event)">
+    <div class="backup-status" id="backupStatus" aria-live="polite"></div>
+  </div>
+  <div id="progress-breakdown"></div>
+</div>
+
+<!-- ═══ WORKOUT MODAL ═══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-tag" id="modalTag"></div>
+      <div class="modal-title" id="modalTitle"></div>
+    </div>
+    <div class="modal-body">
+      <div id="modalAudio"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="steps-title" id="stepsLabel" style="display:none">Workout Steps</div>
+      <div id="modalSteps"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-done" id="btnDone" onclick="markDone()">✓ Mark Complete</button>
+      <button class="btn-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────
+
+const couch5kData = [
+  { week:1, audio:'5K 101 Week One.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Walk/Jog Intervals', detail:'2 min jog + 3 min walk × 4', steps:[{t:'5 min walk warm-up'},{t:'2 min easy jog',e:50},{t:'3 min walk'},{t:'×4 total intervals'},{t:'5 min walk cool-down'}]},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day — drink water'},
+    {day:'Wed', type:'easy', name:'Walk/Jog Intervals', detail:'2 min jog + 3 min walk × 4', steps:[{t:'5 min walk warm-up'},{t:'2 min easy jog',e:50},{t:'3 min walk'},{t:'×4 total intervals'},{t:'5 min walk cool-down'}]},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Walk/Jog Intervals', detail:'2 min jog + 3 min walk × 4', steps:[{t:'5 min walk warm-up'},{t:'2 min easy jog',e:50},{t:'3 min walk'},{t:'×4 total intervals'},{t:'5 min walk cool-down'}]},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:2, audio:'5K 101 Week Two.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Walk/Jog Intervals', detail:'2.5 min jog + 2.5 min walk × 5', steps:[{t:'5 min walk'},{t:'2.5 min easy jog',e:50},{t:'2.5 min walk'},{t:'×5 intervals'},{t:'5 min walk cool-down'}]},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Walk/Jog Intervals', detail:'2.5 min jog + 2.5 min walk × 5', steps:[{t:'5 min walk'},{t:'2.5 min jog',e:50},{t:'2.5 min walk'},{t:'×5 intervals'},{t:'5 min cool-down walk'}]},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Walk/Jog Intervals', detail:'2.5 min jog + 2.5 min walk × 5', steps:[{t:'5 min walk'},{t:'2.5 min jog',e:50},{t:'2.5 min walk'},{t:'×5 intervals'},{t:'5 min cool-down walk'}]},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:3, audio:'5K 101 Week Three.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Walk/Jog Intervals', detail:'3 min jog + 2 min walk × 5'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Walk/Jog Intervals', detail:'3 min jog + 2 min walk × 5'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Walk/Jog Intervals', detail:'3 min jog + 2 min walk × 5'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:4, audio:'5K 101 Week Four.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Walk/Jog Intervals', detail:'4 min jog + 1 min walk × 5'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Walk/Jog Intervals', detail:'4 min jog + 1 min walk × 5'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Walk/Jog Intervals', detail:'4 min jog + 1 min walk × 5'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:'4.2', audio:'Week 4-2 Supplement.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Longer Intervals', detail:'6 min jog + 2 min walk × 3'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Longer Intervals', detail:'6 min jog + 2 min walk × 3'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Longer Intervals', detail:'6 min jog + 2 min walk × 3'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:5, audio:'5K 101 Week Five.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Extended Intervals', detail:'8 min jog + 2 min walk × 3'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Extended Intervals', detail:'8 min jog + 2 min walk × 3'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Extended Intervals', detail:'8 min jog + 2 min walk × 3'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:6, audio:'5K 101 Week Six.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Long Intervals', detail:'12 min jog + 3 min walk × 2'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Long Intervals', detail:'12 min jog + 3 min walk × 2'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Long Intervals', detail:'12 min jog + 3 min walk × 2'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:7, audio:'5K 101 Week Seven.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Long Intervals', detail:'12 min jog + 3 min walk × 3'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Long Intervals', detail:'12 min jog + 3 min walk × 3'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Long Intervals', detail:'12 min jog + 3 min walk × 3'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:'7.2', audio:'Week 7-2 Supplement.mp3', workouts:[
+    {day:'Mon', type:'easy', name:'Near-Continuous Run', detail:'20 min jog + 5 min walk × 2'},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'easy', name:'Near-Continuous Run', detail:'20 min jog + 5 min walk × 2'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'easy', name:'Near-Continuous Run', detail:'20 min jog + 5 min walk × 2'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+  ]},
+  { week:8, audio:'5K 101 Week Eight.mp3', workouts:[
+    {day:'Mon', type:'long', name:'Continuous 30-Min Run 🎉', detail:'Run for 30 full minutes — you can do it!', desc:'This is the graduation week. You\'ve built from 2-minute jogs to a continuous 30-minute run. Go at a comfortable pace and enjoy the accomplishment.', steps:[{t:'5 min walk warm-up'},{t:'30 min continuous easy jog',e:55},{t:'5 min walk cool-down'}]},
+    {day:'Tue', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Wed', type:'long', name:'Continuous 30-Min Run', detail:'30 min continuous jog'},
+    {day:'Thu', type:'rest', name:'Rest & Hydrate', detail:'Rest day'},
+    {day:'Fri', type:'long', name:'Continuous 30-Min Run', detail:'30 min continuous jog — you\'re a runner!'},
+    {day:'Sat', type:'rest', name:'Rest & Hydrate', detail:'Rest day — celebrate!'},
+  ]},
+];
+
+const fastest5kData = [
+  { week:1, workouts:[
+    {day:'Day 1', type:'hard', name:'Time Trial', detail:'Run 3.1 miles (5K) — note your time', desc:'This is your baseline. Map a 3.1 mile route and time yourself. Record your time — this is your starting PR to beat at the end of Week 4. Note your current weight too.'},
+    {day:'Day 2', type:'hard', name:'Speed Training', detail:'Audio-guided · Sprint intervals', audio:'W1D2.mp3', desc:'Loaded with speed exercises. Push hard — you should be out of breath after every speed drill. Max running speed: walking briskly ≈ 25-30%, all-out sprint = 100%.', steps:[{t:'5 min warm-up jog',e:50},{t:'1 min hard run',e:85},{t:'1 min walk'},{t:'1 min hard run',e:85},{t:'1 min walk'},{t:'1 min hard run',e:85},{t:'5 min run',e:70},{t:'1 min hard run',e:85},{t:'1 min walk'},{t:'1 min hard run',e:85},{t:'1 min walk'},{t:'1 min hard run',e:85},{t:'5 min cool-down jog',e:50}]},
+    {day:'Day 3', type:'cross', name:'30-Min Recovery Workout', detail:'Non-running cross-training only', desc:'Recovery workout — not a rest day. Choose: elliptical, weight lifting, swimming, cycling, walking, hiking, rowing, or stairs. Keep it low impact on the legs.'},
+    {day:'Day 4', type:'hard', name:'Endurance Training', detail:'Audio-guided · 4-min intervals at 75%', audio:'W1D4.mp3', desc:'Focus on endurance today. Run 3 sets of 4-minute intervals at stretch pace — slightly faster than your normal mile pace. Run hard but finish without stopping.', steps:[{t:'5 min warm-up jog',e:50},{t:'4 min run — push yourself',e:75},{t:'5 min jog — no slacking',e:65},{t:'4 min run',e:75},{t:'5 min jog',e:65},{t:'4 min run',e:75},{t:'5 min cool-down jog',e:50}]},
+    {day:'Day 5', type:'rest', name:'Rest Day', detail:'No activity. Relax, rehydrate, rejuvenate.'},
+    {day:'Day 6', type:'long', name:'Long Run 40–60 Min', detail:'Easy jog, your playlist, no pressure', desc:'Your weekly long run. No drills, no pressure. Use your own playlist and go for an easy 40–60 minute jog. Stretch properly afterward.'},
+    {day:'Day 7', type:'rest', name:'Rest Day', detail:'No activity. Rest up.'},
+  ]},
+  { week:2, workouts:[
+    {day:'Day 1', type:'hard', name:'Speed Training', detail:'Audio-guided · 30-sec sprint × 6', audio:'W2D1.mp3', desc:'Sprint exercises today. Push very hard — 95-100% effort on each sprint.', steps:[{t:'10 min warm-up jog',e:50},{t:'30 sec sprint',e:100},{t:'2 min jog',e:70},{t:'30 sec sprint',e:100},{t:'2 min jog',e:70},{t:'30 sec sprint',e:100},{t:'2 min jog',e:70},{t:'30 sec sprint',e:100},{t:'2 min jog',e:70},{t:'30 sec sprint',e:100},{t:'2 min jog',e:70},{t:'30 sec sprint',e:100},{t:'2 min jog',e:70},{t:'5 min cool-down walk',e:50}]},
+    {day:'Day 2', type:'easy', name:'Short Run 20–30 Min', detail:'Faster than comfortable pace · Your playlist', desc:'Push yourself to run a bit faster than your normal comfortable pace. Use your own playlist. Finish with a 5-minute cool-down walk and stretch.'},
+    {day:'Day 3', type:'cross', name:'30-Min Recovery Workout', detail:'Cross-training — no running'},
+    {day:'Day 4', type:'hard', name:'Endurance Training', detail:'Audio-guided · 3-min intervals at 80%', audio:'W2D4.mp3', desc:'Five sets of 3-minute hard intervals at 80% max speed, followed by 2-minute recovery jogs at 60-70%. Go hard and finish strong.', steps:[{t:'5 min warm-up jog',e:50},{t:'3 min hard run',e:80},{t:'2 min jog',e:65},{t:'3 min hard run',e:80},{t:'2 min jog',e:65},{t:'3 min hard run',e:80},{t:'2 min jog',e:65},{t:'3 min hard run',e:80},{t:'2 min jog',e:65},{t:'3 min hard run',e:80},{t:'5 min cool-down jog',e:50}]},
+    {day:'Day 5', type:'rest', name:'Rest Day', detail:'No activity.'},
+    {day:'Day 6', type:'long', name:'Long Run 40–60 Min', detail:'Easy jog · No pressure · Your playlist'},
+    {day:'Day 7', type:'rest', name:'Rest Day', detail:'No activity.'},
+  ]},
+  { week:3, workouts:[
+    {day:'Day 1', type:'hard', name:'Shadow Runs', detail:'Audio-guided · 5-min intervals back-and-forth', audio:'W3D1.mp3', desc:'Find a landmark as your starting line. Run at 5K race pace for 5 minutes, mark your finish line. Rest 3 minutes, then run back and forth 5 more times. Goal: get faster each interval.', steps:[{t:'5 min warm-up jog',e:50},{t:'5 min hard run — mark start',e:90},{t:'3 min rest'},{t:'5 min hard run — back to start',e:90},{t:'3 min rest'},{t:'5 min hard run',e:90},{t:'3 min rest'},{t:'5 min hard run',e:90},{t:'3 min rest'},{t:'5 min hard run',e:90},{t:'3 min rest'},{t:'5 min hard run',e:90},{t:'5 min cool-down jog',e:50}]},
+    {day:'Day 2', type:'easy', name:'Short Run 20–30 Min', detail:'Push the pace · Your playlist'},
+    {day:'Day 3', type:'cross', name:'30-Min Recovery Workout', detail:'Cross-training — no running'},
+    {day:'Day 4', type:'hard', name:'Endurance Training', detail:'Repeat of W1D4 — show your improvement', audio:'W3D4.mp3', steps:[{t:'5 min warm-up jog',e:50},{t:'4 min run',e:75},{t:'5 min jog',e:65},{t:'4 min run',e:75},{t:'5 min jog',e:65},{t:'4 min run',e:75},{t:'5 min cool-down jog',e:50}]},
+    {day:'Day 5', type:'rest', name:'Rest Day', detail:'No activity.'},
+    {day:'Day 6', type:'long', name:'Long Run 40–60 Min', detail:'Easy jog · Your playlist'},
+    {day:'Day 7', type:'rest', name:'Rest Day', detail:'No activity.'},
+  ]},
+  { week:4, workouts:[
+    {day:'Day 1', type:'hard', name:'Long Shadow Runs', detail:'Audio-guided · 12-min intervals', audio:'W4D1.mp3', desc:'Final week! Shadow runs again but longer. After warm-up, run at race pace for 12 minutes (6 min out, turn around, 6 min back). Repeat 3 times. NO SANDBAGGING!', steps:[{t:'5 min warm-up jog',e:50},{t:'12 min hard run — 6 out, 6 back',e:90},{t:'3 min rest'},{t:'12 min hard run',e:90},{t:'3 min rest'},{t:'12 min hard run',e:90},{t:'5 min cool-down jog',e:50}]},
+    {day:'Day 2', type:'easy', name:'Short Run 20–30 Min', detail:'Push the pace · Your playlist'},
+    {day:'Day 3', type:'cross', name:'30-Min Recovery Workout', detail:'Cross-training — no running'},
+    {day:'Day 4', type:'long', name:'Long Run 40–60 Min', detail:'Easy jog · No pressure'},
+    {day:'Day 5', type:'rest', name:'Rest Day', detail:'No activity.'},
+    {day:'Day 6', type:'rest', name:'Rest Day', detail:'Rest up — final time trial tomorrow!'},
+    {day:'Day 7', type:'hard', name:'🏁 Final Time Trial', detail:'Run 3.1 miles — beat your Week 1 time!', desc:'This is it. Run the same route as your Week 1 time trial. You WILL set a new PR. Enjoy your success — you earned it! Share your result with the Running Program community at todd@runningmatemedia.com'},
+  ]},
+];
+
+const tenkData = [
+  { week:1, workouts:[
+    {day:'Day 1', type:'audio', name:'Audio Track 1', detail:'8 min run + 2 min walk × 4', audio:'Track 1.mp3', steps:[{t:'5 min walk'},{t:'8 min run',e:80},{t:'2 min walk'},{t:'×4 intervals'},{t:'5 min walk'}]},
+    {day:'Day 2', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 3', type:'easy', name:'30-Minute Easy Jog', detail:'Low intensity · Include strength training', audio:'30 minute jog.mp3', desc:'Low intensity jog. Include weight/strength training for best results.'},
+    {day:'Day 4', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 5', type:'audio', name:'Audio Track 2', detail:'10 min run + 2 min walk × 3', audio:'Track 2.mp3', steps:[{t:'5 min walk'},{t:'10 min run',e:80},{t:'2 min walk'},{t:'×3 intervals'},{t:'5 min walk'}]},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 3.1 Miles', detail:'5K distance at comfortable pace', audio:'10K Run Track.mp3'},
+  ]},
+  { week:2, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'Audio Track 2', detail:'10 min run + 2 min walk × 3', audio:'Track 2.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'easy', name:'30-Minute Easy Jog', detail:'Low intensity · Include strength training', audio:'30 minute jog.mp3'},
+    {day:'Day 5', type:'audio', name:'Audio Track 3', detail:'5 min run + 3 min jog × 4', audio:'Track 3.mp3', steps:[{t:'5 min walk'},{t:'5 min run',e:80},{t:'3 min jog',e:60},{t:'×4 intervals'},{t:'5 min walk'}]},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 4 Miles', detail:'Build to 4 miles (6.4 km)'},
+  ]},
+  { week:3, workouts:[
+    {day:'Day 1', type:'hard', name:'20-Min High Intensity Run', detail:'High intensity + strength training', audio:'20 minute jog.mp3', desc:'20 minute run at high intensity. Include weight/strength training for best results.'},
+    {day:'Day 2', type:'audio', name:'Audio Track 4', detail:'15 min run + 2 min walk × 2', audio:'Track 4.mp3', steps:[{t:'5 min walk'},{t:'15 min run',e:80},{t:'2 min walk'},{t:'×2 intervals'},{t:'5 min walk'}]},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'audio', name:'Audio Track 1', detail:'8 min run + 2 min walk × 4', audio:'Track 1.mp3'},
+    {day:'Day 5', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 6', type:'long', name:'Long Run 4.5 Miles', detail:'4.5 miles (7.2 km)'},
+    {day:'Day 7', type:'rest', name:'Rest', detail:'Rest day'},
+  ]},
+  { week:4, workouts:[
+    {day:'Day 1', type:'audio', name:'Audio Track 3', detail:'5 min run + 3 min jog × 4', audio:'Track 3.mp3'},
+    {day:'Day 2', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 3', type:'easy', name:'45-Minute Easy Jog', detail:'Low intensity · Include strength training', audio:'45 Minute Jog.mp3'},
+    {day:'Day 4', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 5', type:'audio', name:'Audio Track 2', detail:'10 min run + 2 min walk × 3', audio:'Track 2.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 5 Miles', detail:'5 miles (8 km)'},
+  ]},
+  { week:5, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'Audio Track 4', detail:'15 min run + 2 min walk × 2', audio:'Track 4.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'hard', name:'20-Min High Intensity Run', detail:'High intensity + strength training', audio:'20 minute jog.mp3'},
+    {day:'Day 5', type:'audio', name:'Audio Track 1', detail:'8 min run + 2 min walk × 4', audio:'Track 1.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 5.5 Miles', detail:'5.5 miles (8.8 km)'},
+  ]},
+  { week:6, workouts:[
+    {day:'Day 1', type:'easy', name:'45-Minute Easy Jog', detail:'Low intensity · Include strength training', audio:'45 Minute Jog.mp3'},
+    {day:'Day 2', type:'audio', name:'Audio Track 2', detail:'10 min run + 2 min walk × 3', audio:'Track 2.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'audio', name:'Audio Track 3', detail:'5 min run + 3 min jog × 4', audio:'Track 3.mp3'},
+    {day:'Day 5', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'🏁 Long Run 6.2 Miles', detail:'10K distance — you made it!', audio:'10K Run Track.mp3', desc:'This is it — a full 10K! Run at a comfortable pace and enjoy crossing this milestone.'},
+  ]},
+];
+
+const hmData = [
+  { week:1, workouts:[
+    {day:'Day 1', type:'audio', name:'Boston — Listen to Intro Track', detail:'10 min run + 2 min walk × 3', audio:'HMX-Intro.mp3', steps:[{t:'5 min walk'},{t:'10 min run',e:80},{t:'2 min walk'},{t:'×3 intervals'},{t:'5 min walk'}]},
+    {day:'Day 2', type:'easy', name:'4-Mile Easy Jog', detail:'Low intensity · Short walk breaks ok'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'audio', name:'London', detail:'8 min run + 2 min jog × 4', audio:'HMX-London.mp3', steps:[{t:'5 min walk'},{t:'8 min run',e:80},{t:'2 min jog',e:60},{t:'×4 intervals'},{t:'5 min walk'}]},
+    {day:'Day 5', type:'hard', name:'2-Mile High Intensity Run', detail:'>10% faster than race pace'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 6 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:2, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'New York', detail:'15 min jog + 3 min walk × 3', audio:'HMX-New-York.mp3', steps:[{t:'5 min walk'},{t:'15 min jog',e:75},{t:'3 min walk'},{t:'×3 intervals'},{t:'5 min walk'}]},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'easy', name:'3-Mile Easy Jog', detail:'Low intensity · On your own'},
+    {day:'Day 5', type:'audio', name:'Boston', detail:'10 min run + 2 min walk × 3', audio:'HMX-Boston.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 6 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:3, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'hard', name:'2-Mile High Intensity Run', detail:'>10% faster than race pace'},
+    {day:'Day 3', type:'audio', name:'Melbourne', detail:'12 min jog + 3 min walk × 5', audio:'HMX-Melbourne.mp3', steps:[{t:'5 min walk'},{t:'12 min jog',e:75},{t:'3 min walk'},{t:'×5 intervals'},{t:'5 min walk'}]},
+    {day:'Day 4', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 5', type:'audio', name:'London', detail:'8 min run + 2 min jog × 4', audio:'HMX-London.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 6 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:4, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'Stockholm', detail:'20 min run + 5 min walk × 3', audio:'HMX-Stockholm.mp3', steps:[{t:'5 min walk'},{t:'20 min run',e:80},{t:'5 min walk'},{t:'×3 intervals'},{t:'5 min walk'}]},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'hard', name:'2-Mile High Intensity Run', detail:'>10% faster than race pace'},
+    {day:'Day 5', type:'audio', name:'London', detail:'8 min run + 2 min jog × 4', audio:'HMX-London.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 8 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:5, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'New York', detail:'15 min jog + 3 min walk × 3', audio:'HMX-New-York.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'easy', name:'3-Mile Easy Jog', detail:'Low intensity · On your own'},
+    {day:'Day 5', type:'audio', name:'Melbourne', detail:'12 min jog + 3 min walk × 5', audio:'HMX-Melbourne.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 8 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:6, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'New York', detail:'15 min jog + 3 min walk × 3', audio:'HMX-New-York.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'hard', name:'2-Mile High Intensity Run', detail:'>10% faster than race pace'},
+    {day:'Day 5', type:'easy', name:'6-Mile Easy Jog', detail:'Low intensity · Walk breaks ok'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 10 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:7, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'Boston', detail:'10 min run + 2 min walk × 3', audio:'HMX-Boston.mp3'},
+    {day:'Day 3', type:'hard', name:'2-Mile High Intensity Run', detail:'>10% faster than race pace'},
+    {day:'Day 4', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 5', type:'audio', name:'London', detail:'8 min run + 2 min jog × 4', audio:'HMX-London.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 11 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:8, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'Stockholm', detail:'20 min run + 5 min walk × 3', audio:'HMX-Stockholm.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'easy', name:'3-Mile Easy Jog', detail:'Low intensity · On your own'},
+    {day:'Day 5', type:'audio', name:'Melbourne', detail:'12 min jog + 3 min walk × 5', audio:'HMX-Melbourne.mp3'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 7', type:'long', name:'Long Run 12 Miles', detail:'At desired half-marathon pace'},
+  ]},
+  { week:9, workouts:[
+    {day:'Day 1', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 2', type:'audio', name:'New York', detail:'15 min jog + 3 min walk × 3', audio:'HMX-New-York.mp3'},
+    {day:'Day 3', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 4', type:'easy', name:'6-Mile Easy Jog', detail:'Low intensity · Walk breaks ok'},
+    {day:'Day 5', type:'rest', name:'Rest', detail:'Rest day'},
+    {day:'Day 6', type:'rest', name:'Rest', detail:'Rest & taper'},
+    {day:'Day 7', type:'long', name:'🏆 RACE DAY — 13.1 Miles!', detail:'Half Marathon — you are ready!', desc:'This is your race day. 13.1 miles. You\'ve trained hard for 9 weeks. Trust your training, run your pace, and enjoy every mile. YOU\'VE GOT THIS!'},
+  ]},
+];
+
+const stretchData = [
+  {num:1, name:'Wall Stretch A', desc:'Stand 3 feet from wall, feet shoulder-width, hands on wall. Lean hips forward, bend knees slightly. Stretches calves.'},
+  {num:2, name:'Wall Stretch B', desc:'From Wall A position, bend forward to waist height. One foot forward, knee bent. Lift toes to stretch under-calf. Both legs.'},
+  {num:3, name:'Wall Stretch C', desc:'Feet together, rock back on heels with hands on wall, arms straight — jackknife position. Stretches hips, shoulders, lower back.'},
+  {num:4, name:'Heel to Butt', desc:'Stand on one foot, hand on wall for balance. Hold other foot and raise heel to buttocks. Keep body upright. Both legs.'},
+  {num:5, name:'Back Scratcher', desc:'Grab elbow with opposite hand, push up and across until hand reaches back. Guide hand down back. Both arms. Triceps & shoulders.'},
+  {num:6, name:'Hamstring Stretch', desc:'Lie down, one leg up, other bent. Loop towel over arch of raised foot. Gently pull as you push against it. Both legs.'},
+  {num:7, name:'Quadriceps Stretch', desc:'Kneel on both knees (not resting on heels). Lean back with body erect, arms to side. Hold 15 seconds.'},
+  {num:8, name:'Hip & Lower Back', desc:'Sit cross-legged. Lift right leg over left. Hug right leg to chest, twist body to look over right shoulder. Switch sides.'},
+  {num:9, name:'Hamstring & Back', desc:'Lie on back, knees bent. Hug shins to chest to stretch hamstrings and lower back.'},
+  {num:10, name:'Bridge', desc:'Lie on back, feet flat on ground. Lift hips until body forms a flat plane. Repeat 10 times, 30 seconds each.'},
+  {num:11, name:'Groin Stretch', desc:'Seated, soles of feet together. Elbows on inside of knees. Lean forward gently, press knees toward ground.'},
+];
+
+// ─── STATE ───────────────────────────────────────────────
+let completed = loadCompleted();
+let currentModal = null;
+
+function loadCompleted() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('rm_completed') || '{}');
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveState() {
+  localStorage.setItem('rm_completed', JSON.stringify(completed));
+}
+
+async function installApp() {
+  if (!installPromptEvent) return;
+  installPromptEvent.prompt();
+  await installPromptEvent.userChoice;
+  installPromptEvent = null;
+  document.getElementById('installCard')?.classList.remove('show');
+}
+
+function setBackupStatus(message, isError = false) {
+  const el = document.getElementById('backupStatus');
+  if (!el) return;
+  el.textContent = message;
+  el.style.color = isError ? '#ffb8ad' : '';
+}
+
+function exportProgress() {
+  const payload = {
+    app: 'running-program',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    completed
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10);
+  link.href = url;
+  link.download = `running-program-progress-${date}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  setBackupStatus('Backup exported. Upload that JSON file to MEGA or GitHub when you want cloud storage.');
+}
+
+function importProgress(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const nextCompleted = parsed.completed || parsed;
+      if (!nextCompleted || typeof nextCompleted !== 'object' || Array.isArray(nextCompleted)) {
+        throw new Error('Invalid backup');
+      }
+
+      completed = Object.fromEntries(
+        Object.entries(nextCompleted).filter(([key, value]) => typeof key === 'string' && typeof value === 'boolean')
+      );
+      saveState();
+      renderAll();
+      setBackupStatus('Backup imported. Your progress has been restored.');
+    } catch (error) {
+      setBackupStatus('That backup file could not be imported.', true);
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.onerror = () => {
+    setBackupStatus('That backup file could not be read.', true);
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function resetProgress() {
+  if (!confirm('Reset all workout progress?')) return;
+  completed = {};
+  saveState();
+  renderAll();
+  setBackupStatus('Progress reset.');
+}
+
+function workoutId(program, week, dayIdx) {
+  return `${program}_w${week}_d${dayIdx}`;
+}
+
+// ─── RENDER FUNCTIONS ─────────────────────────────────────
+
+function tagClass(type) {
+  return {rest:'tag-rest', hard:'tag-hard', long:'tag-long', easy:'tag-easy', cross:'tag-cross', audio:'tag-audio'}[type] || 'tag-easy';
+}
+function tagLabel(type) {
+  return {rest:'Rest', hard:'Hard', long:'Long', easy:'Easy', cross:'Cross-train', audio:'Audio'}[type] || type;
+}
+
+function renderProgram(containerId, programKey, data) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = data.map((weekData, wi) => {
+    const wId = weekData.week;
+    const completedCount = weekData.workouts.filter((w,di) => completed[workoutId(programKey, wId, di)]).length;
+    const total = weekData.workouts.length;
+    return `
+      <div class="week-block">
+        <div class="week-header" onclick="toggleWeek('${programKey}-week-${wi}', this)">
+          <div class="week-header-left">
+            <div class="week-badge">WK ${wId}</div>
+            <div>
+              <div class="week-title-text">Week ${wId}</div>
+              <div class="week-progress">${completedCount}/${total} completed</div>
+            </div>
+          </div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="week-body" id="${programKey}-week-${wi}">
+          ${weekData.workouts.map((w, di) => {
+            const id = workoutId(programKey, wId, di);
+            const done = !!completed[id];
+            return `
+              <div class="day-row" onclick="openModal('${programKey}','${wId}',${di})">
+                <div class="day-check ${done?'done':''}" id="check-${id}">${done?'✓':''}</div>
+                <div class="day-info">
+                  <div class="day-label">${w.day}</div>
+                  <div class="day-workout">${w.name}</div>
+                  <div class="day-detail">${w.detail}</div>
+                  ${(w.audio || (weekData.audio && w.type !== 'rest')) ? `<span class="day-audio-badge">🎧 ${w.audio || weekData.audio}</span>` : ''}
+                </div>
+                <div class="day-tag ${tagClass(w.type)}">${tagLabel(w.type)}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderStretching() {
+  document.getElementById('stretch-grid').innerHTML = stretchData.map(s => `
+    <div class="stretch-card">
+      <div class="stretch-num">${String(s.num).padStart(2,'0')}</div>
+      <div class="stretch-name">${s.name}</div>
+      <div class="stretch-desc">${s.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ─── WEEK TOGGLE ──────────────────────────────────────────
+function toggleWeek(id, headerEl) {
+  const body = document.getElementById(id);
+  const chevron = headerEl.querySelector('.chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  headerEl.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+}
+
+// ─── ALL DATA LOOKUP ──────────────────────────────────────
+const allData = {couch5k: couch5kData, fastest5k: fastest5kData, tenk: tenkData, halfmarathon: hmData};
+
+function openModal(programKey, weekId, dayIdx) {
+  const data = allData[programKey];
+  const weekData = data.find(w => String(w.week) === String(weekId));
+  if (!weekData) return;
+  const workout = weekData.workouts[dayIdx];
+  if (!workout) return;
+
+  currentModal = {programKey, weekId, dayIdx, id: workoutId(programKey, weekId, dayIdx)};
+
+  document.getElementById('modalTag').textContent = `Week ${weekId} · ${workout.day}`;
+  document.getElementById('modalTitle').textContent = workout.name;
+  document.getElementById('modalDesc').textContent = workout.desc || workout.detail;
+
+  // Audio — per-workout audio (Fastest 5K) or week-level audio (Couch to 5K, HM)
+  const audioEl = document.getElementById('modalAudio');
+  const audioFile = workout.audio || weekData.audio || null;
+  if (audioFile) {
+    audioEl.innerHTML = `
+      <div class="audio-block">
+        <div class="audio-icon">🎧</div>
+        <div class="audio-info">
+          <div class="audio-label">Audio Coaching Track</div>
+          <div class="audio-filename">${audioFile}</div>
+          <div class="audio-player"><audio controls src="${audioFile}"></audio></div>
+        </div>
+      </div>
+    `;
+  } else {
+    audioEl.innerHTML = '';
+  }
+
+  const stepsEl = document.getElementById('modalSteps');
+  const stepsLabel = document.getElementById('stepsLabel');
+  if (workout.steps && workout.steps.length) {
+    stepsLabel.style.display = 'block';
+    stepsEl.innerHTML = workout.steps.map((s, i) => `
+      <div class="step-row">
+        <div class="step-num">${i+1}</div>
+        <div>
+          <div class="step-text">${s.t}</div>
+          ${s.e !== undefined ? `
+            <div class="step-effort">${s.e}% effort</div>
+            <div class="effort-bar"><div class="effort-fill" style="width:${s.e}%"></div></div>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+  } else {
+    stepsLabel.style.display = 'none';
+    stepsEl.innerHTML = '';
+  }
+
+  const done = !!completed[currentModal.id];
+  const btn = document.getElementById('btnDone');
+  btn.textContent = done ? '✓ Completed!' : '✓ Mark Complete';
+  btn.style.background = done ? '#888' : '';
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentModal = null;
+}
+
+function markDone() {
+  if (!currentModal) return;
+  const id = currentModal.id;
+  completed[id] = !completed[id];
+  saveState();
+
+  // Update check mark
+  const checkEl = document.getElementById('check-' + id);
+  if (checkEl) {
+    checkEl.classList.toggle('done', !!completed[id]);
+    checkEl.textContent = completed[id] ? '✓' : '';
+  }
+
+  // Update button
+  const btn = document.getElementById('btnDone');
+  btn.textContent = completed[id] ? '✓ Completed!' : '✓ Mark Complete';
+  btn.style.background = completed[id] ? '#888' : '';
+
+  // Update week header counts
+  reRenderWeekHeaders();
+  updateProgress();
+}
+
+function reRenderWeekHeaders() {
+  Object.entries(allData).forEach(([programKey, data]) => {
+    data.forEach((weekData, wi) => {
+      const wId = weekData.week;
+      const completedCount = weekData.workouts.filter((w,di) => completed[workoutId(programKey, wId, di)]).length;
+      const total = weekData.workouts.length;
+      const progEl = document.querySelector(`#${programKey}-week-${wi}`)?.previousElementSibling?.querySelector('.week-progress');
+      if (progEl) progEl.textContent = `${completedCount}/${total} completed`;
+    });
+  });
+}
+
+// ─── PROGRESS ────────────────────────────────────────────
+function updateProgress() {
+  let total = 0, done = 0;
+  const breakdown = [];
+
+  Object.entries(allData).forEach(([programKey, data]) => {
+    let pTotal = 0, pDone = 0;
+    data.forEach(weekData => {
+      weekData.workouts.forEach((w, di) => {
+        pTotal++; total++;
+        if (completed[workoutId(programKey, weekData.week, di)]) { pDone++; done++; }
+      });
+    });
+    breakdown.push({label: {couch5k:'Couch to 5K', fastest5k:'Fastest 5K', tenk:'10K 101', halfmarathon:'Half Marathon'}[programKey], done: pDone, total: pTotal});
+  });
+
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-left').textContent = total - done;
+
+  document.getElementById('progress-breakdown').innerHTML = breakdown.map(b => `
+    <div class="tip-card">
+      <div class="tip-icon">🏃</div>
+      <div style="flex:1">
+        <div class="tip-title">${b.label}</div>
+        <div class="tip-text">${b.done} of ${b.total} workouts complete</div>
+        <div class="progress-bar-wrap" style="margin-top:8px"><div class="progress-bar-fill" style="width:${b.total?Math.round(b.done/b.total*100):0}%"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAll() {
+  renderProgram('couch5k-weeks', 'couch5k', couch5kData);
+  renderProgram('fastest5k-weeks', 'fastest5k', fastest5kData);
+  renderProgram('tenk-weeks', 'tenk', tenkData);
+  renderProgram('hm-weeks', 'halfmarathon', hmData);
+  renderStretching();
+  updateProgress();
+}
+
+// ─── NAV ─────────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const navBtns = document.querySelectorAll('nav button');
+  const map = {home:0,'couch5k':1,'fastest5k':2,'tenk':3,'halfmarathon':4,'stretching':5,'progress':6};
+  if (map[id] !== undefined) navBtns[map[id]].classList.add('active');
+  if (id === 'progress') updateProgress();
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+function init() {
+  renderAll();
+
+  // Today pill
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const now = new Date();
+  document.getElementById('todayPill').textContent = `${days[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()}`;
+}
+
+init();
+</script>
+</body>
+</html>

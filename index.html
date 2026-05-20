@@ -1053,7 +1053,7 @@ function workoutId(program, week, dayIdx) {
 }
 
 function audioSrc(fileName) {
-  return AUDIO_BASE_URL + encodeURIComponent(fileName);
+  return AUDIO_BASE_URL + encodeURIComponent(fileName.replaceAll(' ', '.'));
 }
 
 // ─── RENDER FUNCTIONS ─────────────────────────────────────
